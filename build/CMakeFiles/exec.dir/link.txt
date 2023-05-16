@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/exec.dir/main.cpp.o CMakeFiles/exec.dir/source/Edge.cpp.o CMakeFiles/exec.dir/source/Graph.cpp.o CMakeFiles/exec.dir/source/Node.cpp.o -o exec 
