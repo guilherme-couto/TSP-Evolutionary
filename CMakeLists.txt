@@ -12,3 +12,6 @@ file(GLOB source_files
 add_executable(exec ${source_files})
 
 include_directories(./include)
+
+# Look for an installation of pagmo in the system.
+find_package(Pagmo REQUIRED)
