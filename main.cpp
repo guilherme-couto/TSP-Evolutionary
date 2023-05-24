@@ -1,6 +1,7 @@
 #include "defines.hpp"
 #include "Graph.hpp"
 #include "read.hpp"
+#include "Structures.hpp"
 
 int main(int argc, char const *argv[])
 {
@@ -19,21 +20,21 @@ int main(int argc, char const *argv[])
 
     // Read instance
     // Graph* g = readInstanceToGraph(input_file_address);
-    vector<vector<float>> distance_matrix = readInstanceToMatrix(input_file_address);
+    vector<vector<Path>> matrix = readInstanceToMatrix(input_file_address);
 
-    return 0;
+    // return 0;
 
     // Print matrix
     cout << "\nDistance matrix:" << endl;
-    for (int i = 0; i < distance_matrix.size(); i++)
+    for (int i = 0; i < matrix.size(); i++)
     {
-        for (int j = 0; j < distance_matrix[i].size(); j++)
+        for (int j = 0; j < matrix[i].size(); j++)
         {
-            cout << distance_matrix[i][j] << " ";
+            cout << matrix[i][j].distance << " ";
         }
         cout << endl;
     }
 
-    // return 0;
+    return 0;
 }
 

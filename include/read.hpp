@@ -3,6 +3,7 @@
 
 #include "defines.hpp"
 #include "Graph.hpp"
+#include "Structures.hpp"
 
 Graph* readInstanceToGraph(string input_file_address)
 {
@@ -172,7 +173,7 @@ Graph* readInstanceToGraph(string input_file_address)
 }
 
 
-vector<vector<float>> readInstanceToMatrix(string input_file_address)
+vector<vector<Path>> readInstanceToMatrix(string input_file_address)
 {
     // Check if input file address is valid
     if (input_file_address.find("../instances/") == string::npos)
@@ -195,8 +196,8 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
         exit(1);
     }
     
-    // Create distance matrix
-    vector<vector<float>> distance_matrix;
+    // Create path matrix
+    vector<vector<Path>> matrix;
 
     // Open file
     ifstream instance_file;
@@ -235,10 +236,10 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
         cout << "Number of nodes: " << number_of_nodes << endl;
 
         // Resize matrix
-        distance_matrix.resize(number_of_nodes);
+        matrix.resize(number_of_nodes);
         for (int i = 0; i < number_of_nodes; i++)
         {
-            distance_matrix[i].resize(number_of_nodes);
+            matrix[i].resize(number_of_nodes);
         }
 
         // Skip 2 lines
@@ -268,8 +269,16 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
             x1 = nodes_coordinates[i].first;
             y1 = nodes_coordinates[i].second;
 
-            for (int j = i+1; j < number_of_nodes; j++)
+            for (int j = i; j < number_of_nodes; j++)
             {
+                // If i = j, distance = 1e8
+                if (i == j)
+                {
+                    matrix[i][j].distance = 1e8;
+                    matrix[i][j].eta = 1e-8;
+                    continue;
+                }
+
                 double x2, y2;
                 double euclidean_distance;
 
@@ -280,8 +289,10 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
                 euclidean_distance = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) * 1.0);
 
                 // Insert distance in matrix (symmetric)
-                distance_matrix[i][j] = euclidean_distance;
-                distance_matrix[j][i] = euclidean_distance;
+                matrix[i][j].distance = euclidean_distance;
+                matrix[i][j].eta = 1.0 / euclidean_distance;
+                matrix[j][i].distance = euclidean_distance;
+                matrix[j][i].eta = 1.0 / euclidean_distance;
             }
         }
 
@@ -304,10 +315,10 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
         cout << "Number of nodes: " << number_of_nodes << endl;
 
         // Resize matrix
-        distance_matrix.resize(number_of_nodes);
+        matrix.resize(number_of_nodes);
         for (int i = 0; i < number_of_nodes; i++)
         {
-            distance_matrix[i].resize(number_of_nodes);
+            matrix[i].resize(number_of_nodes);
         }
 
         // Skip 3 lines
@@ -329,14 +340,8 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
                     aux_ss >> distance;
 
                     // Insert distance in matrix (asymmetric)
-                    if (distance != " ")
-                    {
-                        distance_matrix[i][j] = stod(distance);
-                    }
-                    else
-                    {
-                        cout << "No edge from " << i << " to " << j << endl;
-                    }
+                    matrix[i][j].distance = stod(distance);
+                    matrix[i][j].eta = 1.0 / stod(distance);
                 }
             }
         }
@@ -353,15 +358,11 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
                 
                 for (int k = 0; k < 6; k++)
                 {
-                    if (counter == number_of_nodes * number_of_nodes)
-                    {
-                        break;
-                    }
-
                     aux_ss >> distance;
 
                     // Insert distance in matrix (asymmetric)
-                    distance_matrix[i][j] = stod(distance);
+                    matrix[i][j].distance = stod(distance);
+                    matrix[i][j].eta = 1.0 / stod(distance);
 
                     if (j == number_of_nodes)
                     {
@@ -370,13 +371,18 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
                     }
                     j++;
                     counter++;
+
+                    if (counter == number_of_nodes * number_of_nodes)
+                    {
+                        break;
+                    }
                 }
             }
         }
     }
 
-    cout << "File read and distance matrix created" << endl;
-    return distance_matrix;
+    cout << "File read and matrix created" << endl;
+    return matrix;
 }
 
 #endif // READ_HPP
