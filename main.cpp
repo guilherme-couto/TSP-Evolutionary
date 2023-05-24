@@ -21,6 +21,8 @@ int main(int argc, char const *argv[])
     // Graph* g = readInstanceToGraph(input_file_address);
     vector<vector<float>> distance_matrix = readInstanceToMatrix(input_file_address);
 
+    return 0;
+
     // Print matrix
     cout << "\nDistance matrix:" << endl;
     for (int i = 0; i < distance_matrix.size(); i++)
@@ -32,6 +34,6 @@ int main(int argc, char const *argv[])
         cout << endl;
     }
 
-    return 0;
+    // return 0;
 }
 

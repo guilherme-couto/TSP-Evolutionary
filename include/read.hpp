@@ -286,7 +286,7 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
         }
 
     }
-    else if (input_file == "br17.atsp")
+    else if (input_file == "br17.atsp" || input_file == "ftv70.atsp")
     {
         // Skip first 3 lines
         for (int i = 0; i < 3; i++)
@@ -316,31 +316,63 @@ vector<vector<float>> readInstanceToMatrix(string input_file_address)
             getline(instance_file, garbage);
         }
 
-        // Get edges from matrix
-        for (int i = 0; i < number_of_nodes; i++)
+        // Get edges from matrix for br17.atsp
+        if (input_file == "br17.atsp")
         {
-            getline(instance_file, line);
-            stringstream aux_ss(line);
-            
-            for (int j = 0; j < number_of_nodes; j++)
+            for (int i = 0; i < number_of_nodes; i++)
             {
-                aux_ss >> distance;
+                getline(instance_file, line);
+                stringstream aux_ss(line);
+                
+                for (int j = 0; j < number_of_nodes; j++)
+                {
+                    aux_ss >> distance;
 
-                // Insert distance in matrix (asymmetric)
-                if (distance != " ")
-                {
-                    distance_matrix[i][j] = stod(distance);
-                }
-                else
-                {
-                    cout << "No edge from " << i << " to " << j << endl;
+                    // Insert distance in matrix (asymmetric)
+                    if (distance != " ")
+                    {
+                        distance_matrix[i][j] = stod(distance);
+                    }
+                    else
+                    {
+                        cout << "No edge from " << i << " to " << j << endl;
+                    }
                 }
             }
         }
-    }
-    else if (input_file == "ftv70.atsp")
-    {
 
+        // Get edges from matrix for ftv70.atsp
+        else
+        {
+            int i = 0, j = 0;
+            int counter = 0;
+            while (counter < number_of_nodes * number_of_nodes)
+            {
+                getline(instance_file, line);
+                stringstream aux_ss(line);
+                
+                for (int k = 0; k < 6; k++)
+                {
+                    if (counter == number_of_nodes * number_of_nodes)
+                    {
+                        break;
+                    }
+
+                    aux_ss >> distance;
+
+                    // Insert distance in matrix (asymmetric)
+                    distance_matrix[i][j] = stod(distance);
+
+                    if (j == number_of_nodes)
+                    {
+                        i++;
+                        j = 0;
+                    }
+                    j++;
+                    counter++;
+                }
+            }
+        }
     }
 
     cout << "File read and distance matrix created" << endl;
