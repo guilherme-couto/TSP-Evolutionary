@@ -4,25 +4,26 @@
 #include "defines.hpp"
 #include "Graph.hpp"
 
-Graph* readInstance(string input_file_address)
+Graph* readInstanceToGraph(string input_file_address)
 {
+    // Check if input file address is valid
+    if (input_file_address.find("../instances/") == string::npos)
+    {
+        cout << "Error: Invalid input file address (" << input_file_address << ")" << endl;
+        cout << "Check to insert ../instances/<instance_name>" << endl;
+        exit(1);
+    }
+
     // Get input file name
     string input_file;
     size_t pos = input_file_address.find_last_of('/');
-    if (pos != string::npos)
-    {
-        input_file = input_file_address.substr(pos + 1, input_file_address.length());
-    }
-    else
-    {
-        input_file = input_file_address;
-    }
+    input_file = input_file_address.substr(pos + 1, input_file_address.length());
 
     // Error handling
-    if (input_file != "bayg29.tsp" && input_file != "ch130.tsp" && input_file != "br17.atsp" && input_file != "ftv70.atsp")
+    if (input_file != "berlin52.tsp" && input_file != "ch130.tsp" && input_file != "br17.atsp" && input_file != "ftv70.atsp")
     {
-        cout << "Error: Invalid input file address(" << input_file_address << ")" << endl;
-        cout << "Valid input files are: bayg29.tsp, ch130.tsp, br17.atsp, ftv70.atsp" << endl;
+        cout << "Error: Invalid input file address (" << input_file_address << ")" << endl;
+        cout << "Valid input files are: berlin52.tsp, ch130.tsp, br17.atsp, ftv70.atsp" << endl;
         exit(1);
     }
 
@@ -168,6 +169,182 @@ Graph* readInstance(string input_file_address)
 
     cout << "File read and graph created" << endl;
     return graph;
+}
+
+
+vector<vector<float>> readInstanceToMatrix(string input_file_address)
+{
+    // Check if input file address is valid
+    if (input_file_address.find("../instances/") == string::npos)
+    {
+        cout << "Error: Invalid input file address (" << input_file_address << ")" << endl;
+        cout << "Check to insert ../instances/<instance_name>" << endl;
+        exit(1);
+    }
+
+    // Get input file name
+    string input_file;
+    size_t pos = input_file_address.find_last_of('/');
+    input_file = input_file_address.substr(pos + 1, input_file_address.length());
+
+    // Error handling
+    if (input_file != "berlin52.tsp" && input_file != "ch130.tsp" && input_file != "br17.atsp" && input_file != "ftv70.atsp")
+    {
+        cout << "Error: Invalid input file address (" << input_file_address << ")" << endl;
+        cout << "Valid input files are: berlin52.tsp, ch130.tsp, br17.atsp, ftv70.atsp" << endl;
+        exit(1);
+    }
+    
+    // Create distance matrix
+    vector<vector<float>> distance_matrix;
+
+    // Open file
+    ifstream instance_file;
+    instance_file.open(input_file_address, ios::in);
+
+    // Read file
+    string line, garbage;
+    stringstream ss;
+    string temp;
+
+    int cont = 0, j;
+    int number_of_edges;
+    int number_of_nodes;
+
+    string source;
+    string target;
+    string distance;
+    string x_coord;
+    string y_coord;
+
+    if (input_file == "berlin52.tsp" || input_file == "ch130.tsp")
+    {
+        // Skip first 3 lines
+        for (int i = 0; i < 3; i++)
+        {
+            getline(instance_file, garbage);
+        }
+
+        // Get number of nodes
+        getline(instance_file, line);
+        ss << line;
+        getline(ss, garbage);
+        pos = garbage.find(' ');
+        temp = garbage.substr(pos + 1, garbage.length());
+        number_of_nodes = stoi(temp);
+        cout << "Number of nodes: " << number_of_nodes << endl;
+
+        // Resize matrix
+        distance_matrix.resize(number_of_nodes);
+        for (int i = 0; i < number_of_nodes; i++)
+        {
+            distance_matrix[i].resize(number_of_nodes);
+        }
+
+        // Skip 2 lines
+        for (int i = 0; i < 2; i++)
+        {
+            getline(instance_file, garbage);
+        }
+
+        // Get nodes coordinates
+        vector<pair<double, double>> nodes_coordinates(number_of_nodes);
+        for (int i = 0; i < number_of_nodes; i++)
+        {
+            string node_id;
+            getline(instance_file, line);
+            stringstream aux_ss(line);
+            aux_ss >> node_id;
+            aux_ss >> x_coord;
+            aux_ss >> y_coord;
+            
+            nodes_coordinates[i] = make_pair(stod(x_coord), stod(y_coord));
+        }
+
+        // Compute distance between nodes
+        for (int i = 0; i < number_of_nodes; i++)
+        {
+            double x1, y1;
+            x1 = nodes_coordinates[i].first;
+            y1 = nodes_coordinates[i].second;
+
+            for (int j = i+1; j < number_of_nodes; j++)
+            {
+                double x2, y2;
+                double euclidean_distance;
+
+                x2 = nodes_coordinates[j].first;
+                y2 = nodes_coordinates[j].second;
+
+                // Weight = Euclidean distance
+                euclidean_distance = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) * 1.0);
+
+                // Insert distance in matrix (symmetric)
+                distance_matrix[i][j] = euclidean_distance;
+                distance_matrix[j][i] = euclidean_distance;
+            }
+        }
+
+    }
+    else if (input_file == "br17.atsp")
+    {
+        // Skip first 3 lines
+        for (int i = 0; i < 3; i++)
+        {
+            getline(instance_file, garbage);
+        }
+
+        // Get number of nodes
+        getline(instance_file, line);
+        ss << line;
+        getline(ss, garbage);
+        pos = garbage.find(' ');
+        temp = garbage.substr(pos + 1, garbage.length());
+        number_of_nodes = stoi(temp);
+        cout << "Number of nodes: " << number_of_nodes << endl;
+
+        // Resize matrix
+        distance_matrix.resize(number_of_nodes);
+        for (int i = 0; i < number_of_nodes; i++)
+        {
+            distance_matrix[i].resize(number_of_nodes);
+        }
+
+        // Skip 3 lines
+        for (int i = 0; i < 3; i++)
+        {
+            getline(instance_file, garbage);
+        }
+
+        // Get edges from matrix
+        for (int i = 0; i < number_of_nodes; i++)
+        {
+            getline(instance_file, line);
+            stringstream aux_ss(line);
+            
+            for (int j = 0; j < number_of_nodes; j++)
+            {
+                aux_ss >> distance;
+
+                // Insert distance in matrix (asymmetric)
+                if (distance != " ")
+                {
+                    distance_matrix[i][j] = stod(distance);
+                }
+                else
+                {
+                    cout << "No edge from " << i << " to " << j << endl;
+                }
+            }
+        }
+    }
+    else if (input_file == "ftv70.atsp")
+    {
+
+    }
+
+    cout << "File read and distance matrix created" << endl;
+    return distance_matrix;
 }
 
 #endif // READ_HPP
