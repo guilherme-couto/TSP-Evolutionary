@@ -2,6 +2,7 @@
 #include "Graph.hpp"
 #include "read.hpp"
 #include "Structures.hpp"
+#include "ACSAlgorithm.hpp"
 
 int main(int argc, char const *argv[])
 {
@@ -25,7 +26,7 @@ int main(int argc, char const *argv[])
     // return 0;
 
     // Print matrix
-    cout << "\nDistance matrix:" << endl;
+    /* cout << "\nDistance matrix:" << endl;
     for (int i = 0; i < matrix.size(); i++)
     {
         for (int j = 0; j < matrix[i].size(); j++)
@@ -33,8 +34,14 @@ int main(int argc, char const *argv[])
             cout << matrix[i][j].distance << " ";
         }
         cout << endl;
-    }
+    } */
 
+    // Create ACSAlgorithm object
+    ACSAlgorithm* acs = new ACSAlgorithm(2.0, 0.1, 0.9, 10, 1.0, 15, matrix);
+
+    // Run ACS
+    acs->runACS();
+    
     return 0;
 }
 

@@ -20,16 +20,21 @@ private:
     vector<int> best_tour;          // best tour found so far
     double best_tour_length;        // length of the best tour found so far
 
+    int evaluations_budget;         // number of function evaluations budget
+    int function_evaluations;       // number of function evaluations
+
 public:
-    ACSAlgorithm(float beta, float rho, float q0, int m, float tau0, int cl);
+    ACSAlgorithm(float beta, float rho, float q0, int m, float tau0, int cl, vector<vector<Path>> matrix);
     ~ACSAlgorithm();
     
     void initializePheromone();
-    double probabilityToChoosePath(int k, int i, int j, vector<int> J_k_i);
-    int cityToVisit(int k, int i, vector<int> J_k_i);
+    double probabilityToChoosePath(int i, int j, vector<int> J_k_i);
+    int cityToVisit(int i, vector<int> J_k_i);
     void localPheromoneUpdate(int i, int j);
     double computeLengthOfTour(vector<int> tour);
     void globalPheromoneUpdate();
+
+    void runACS();
 };
 
 
