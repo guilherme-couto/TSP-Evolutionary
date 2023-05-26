@@ -36,11 +36,11 @@ ACSAlgorithm::~ACSAlgorithm() {}
 
 void ACSAlgorithm::initializePheromone()
 {
-    for (int i = 0; i < matrix.size(); i++)
+    for (int i = 0; i < this->matrix.size(); i++)
     {
-        for (int j = 0; j < matrix[i].size(); j++)
+        for (int j = 0; j < this->matrix[i].size(); j++)
         {
-            matrix[i][j].pheromone = this->tau0;
+            this->matrix[i][j].pheromone = this->tau0;
         }
     }
 }
@@ -48,26 +48,30 @@ void ACSAlgorithm::initializePheromone()
 
 double ACSAlgorithm::probabilityToChoosePath(int i, int j, vector<int> J_k_i)
 {
-    // If s is not in J_k_i, then the probability is 0
+    // If j is not in J_k_i, then the probability is 0
     if (find(J_k_i.begin(), J_k_i.end(), j) == J_k_i.end())
-    {
+    {   
         return 0.0;
     }
 
-    // If s is in J_k_i, then the probability is:
-    double numerator = matrix[i][j].pheromone * pow(matrix[i][j].eta, this->beta);
+    // If j is in J_k_i, then the probability is:
+    double numerator = this->matrix[i][j].pheromone * pow(this->matrix[i][j].eta, this->beta);
     double denominator = 0.0;
     for (int u = 0; u < J_k_i.size(); u++)
     {
-        denominator += matrix[i][J_k_i[u]].pheromone * pow(matrix[i][J_k_i[u]].eta, this->beta);
+        denominator += this->matrix[i][J_k_i[u]].pheromone * pow(this->matrix[i][J_k_i[u]].eta, this->beta);
     }
-
+    if (numerator == 0.0 || denominator == 0.0)
+    {
+        return 0.0;
+    }
     return numerator / denominator;
 }
 
 
 int ACSAlgorithm::cityToVisit(int i, vector<int> J_k_i)
 {
+    int j = -1;
     // Random number between 0 and 1
     float q = (float)rand() / RAND_MAX;
 
@@ -78,24 +82,32 @@ int ACSAlgorithm::cityToVisit(int i, vector<int> J_k_i)
         int max_index = -1;
         for (int u = 0; u < J_k_i.size(); u++)
         {
-            double product = matrix[i][J_k_i[u]].pheromone * pow(matrix[i][J_k_i[u]].eta, this->beta);
+            double product = this->matrix[i][J_k_i[u]].pheromone * pow(this->matrix[i][J_k_i[u]].eta, this->beta);
             if (product > max)
             {
                 max = product;
                 max_index = u;
             }
         }
-        return J_k_i[max_index];
+        j = J_k_i[max_index];
+        return j;
     }
 
     // If q > q0, then choose the city from probability distribution (good exploration)
     else
     {
+        // If J_k_i size is 1, then choose the only city
+        if (J_k_i.size() == 1)
+        {
+            j = J_k_i[0];
+            return j;
+        }
+        
         // Compute the probability distribution
         vector<double> probability_distribution;
         double sum = 0.0;
         for (int u = 0; u < J_k_i.size(); u++)
-        {
+        {   
             double probability = probabilityToChoosePath(i, J_k_i[u], J_k_i);
             probability_distribution.push_back(probability);
             sum += probability;
@@ -109,10 +121,12 @@ int ACSAlgorithm::cityToVisit(int i, vector<int> J_k_i)
             partial_sum += probability_distribution[u] / sum;
             if (random_number <= partial_sum)
             {
-                return J_k_i[u];
+                j = J_k_i[u];
+                return j;
             }
         }
-    }
+    } 
+    return j;
 }
 
 
@@ -179,7 +193,7 @@ void ACSAlgorithm::runACS()
         tour.push_back(start_cities[i]);
         tours.push_back(tour);
     }
-
+    
     // Main loop
     while (this->function_evaluations < this->evaluations_budget)
     {
@@ -219,7 +233,7 @@ void ACSAlgorithm::runACS()
                 }
 
                 // If exists at least one city in the candidate list, choose one of them
-                int j;
+                int j = 1e8;
                 if (candidate_list.size() > 0)
                 {
                     j = cityToVisit(i, candidate_list);
@@ -231,14 +245,14 @@ void ACSAlgorithm::runACS()
                     for (int u = 0; u < distances_to_i.size(); u++)
                     {
                         if (find(J_k_i.begin(), J_k_i.end(), distances_to_i[u].second) != J_k_i.end())
-                        {
+                        {   
                             j = distances_to_i[u].second;
                             tours[k].push_back(j);
                             break;
                         }
                     }
                 }
-
+                
                 // Update local pheromone
                 localPheromoneUpdate(i, j);
             }
@@ -246,10 +260,10 @@ void ACSAlgorithm::runACS()
 
         // Compute the length of each tour
         for (int k = 0; k < this->m; k++)
-        {
+        {   
             computeLengthOfTour(tours[k]);
         }
-
+        
         // Update global pheromone
         globalPheromoneUpdate();
     }

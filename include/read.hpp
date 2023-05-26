@@ -340,8 +340,17 @@ vector<vector<Path>> readInstanceToMatrix(string input_file_address)
                     aux_ss >> distance;
 
                     // Insert distance in matrix (asymmetric)
-                    matrix[i][j].distance = stod(distance);
-                    matrix[i][j].eta = 1.0 / stod(distance);
+                    double d = stod(distance);
+                    if (d > 0)
+                    {
+                        matrix[i][j].distance = d;
+                        matrix[i][j].eta = 1.0 / d;
+                    }
+                    else
+                    {
+                        matrix[i][j].distance = 0;
+                        matrix[i][j].eta = 1e8;
+                    }
                 }
             }
         }
@@ -361,8 +370,17 @@ vector<vector<Path>> readInstanceToMatrix(string input_file_address)
                     aux_ss >> distance;
 
                     // Insert distance in matrix (asymmetric)
-                    matrix[i][j].distance = stod(distance);
-                    matrix[i][j].eta = 1.0 / stod(distance);
+                    double d = stod(distance);
+                    if (d > 0)
+                    {
+                        matrix[i][j].distance = d;
+                        matrix[i][j].eta = 1.0 / d;
+                    }
+                    else
+                    {
+                        matrix[i][j].distance = 0;
+                        matrix[i][j].eta = 1e8;
+                    }
 
                     if (j == number_of_nodes)
                     {

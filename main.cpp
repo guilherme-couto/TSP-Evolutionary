@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
     /* initialize random seed: */
     srand(time(NULL));
 
-    // Create ACSAlgorithm object
+    // Create ACSAlgorithm object (beta, rho, q0, m, tau0, cl, matrix)
     ACSAlgorithm* acs = new ACSAlgorithm(2.0, 0.1, 0.9, 10, 1.0, 15, matrix);
 
     // Run ACS
