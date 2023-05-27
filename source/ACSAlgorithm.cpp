@@ -213,10 +213,10 @@ void ACSAlgorithm::runACS()
             // Build tour by adding a new city at each step
             while (tours[k].size() < this->number_of_cities)
             {
-                // Get distance of the neighbors of the last city in the tour and build the set J_k_i (neighbors of i that are not in the tour)
+                // Get distance of the neighbors of the last city in the tour and build the set J_k_i (cities that are not in the tour)
                 int i = tours[k][tours[k].size() - 1];
                 vector<pair<float, int>> distances_to_i;    // pair -> (distance, city)
-                vector<int> J_k_i;                          // set of neighbors of i that are not in the tour
+                vector<int> J_k_i;                          // set of cities that are not in the tour
 
                 for (int u = 0; u < this->number_of_cities; u++)
                 {
