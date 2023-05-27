@@ -19,8 +19,10 @@ ACSAlgorithm::ACSAlgorithm(float beta, float rho, float q0, int m, float tau0, i
     this->best_tour.clear();
     this->best_tour_length = 1e8;
 
+    this->number_of_cities = matrix.size();
+
     // Initialize the number of function evaluations acording to the number of cities
-    if (matrix.size() < 50)
+    if (this->number_of_cities < 50)
     {
         this->evaluations_budget = 20000;
     }
@@ -31,12 +33,16 @@ ACSAlgorithm::ACSAlgorithm(float beta, float rho, float q0, int m, float tau0, i
     this->function_evaluations = 0;
 }
 
-ACSAlgorithm::~ACSAlgorithm() {}
+ACSAlgorithm::~ACSAlgorithm()
+{
+    this->best_tour.clear();
+    this->matrix.clear();
+}
 
 
 void ACSAlgorithm::initializePheromone()
 {
-    for (int i = 0; i < this->matrix.size(); i++)
+    for (int i = 0; i < this->number_of_cities; i++)
     {
         for (int j = 0; j < this->matrix[i].size(); j++)
         {
@@ -182,10 +188,10 @@ void ACSAlgorithm::runACS()
 
     for (int i = 0; i < this->m; i++)
     {
-        int random_city = rand() % matrix.size();
+        int random_city = rand() % this->number_of_cities;
         while (find(already_chosen_cities.begin(), already_chosen_cities.end(), random_city) != already_chosen_cities.end())
         {
-            random_city = rand() % matrix.size();
+            random_city = rand() % this->number_of_cities;
         }
         start_cities.push_back(random_city);
         already_chosen_cities.push_back(random_city);
@@ -200,15 +206,19 @@ void ACSAlgorithm::runACS()
         // For every ant
         for (int k = 0; k < this->m; k++)
         {
+            // Reset tour
+            tours[k].clear();
+            tours[k].push_back(start_cities[k]);
+
             // Build tour by adding a new city at each step
-            while (tours[k].size() < matrix.size())
+            while (tours[k].size() < this->number_of_cities)
             {
                 // Get distance of the neighbors of the last city in the tour and build the set J_k_i (neighbors of i that are not in the tour)
                 int i = tours[k][tours[k].size() - 1];
                 vector<pair<float, int>> distances_to_i;    // pair -> (distance, city)
                 vector<int> J_k_i;                          // set of neighbors of i that are not in the tour
 
-                for (int u = 0; u < matrix.size(); u++)
+                for (int u = 0; u < this->number_of_cities; u++)
                 {
                     distances_to_i.push_back(make_pair(matrix[i][u].distance, u));
                     if (find(tours[k].begin(), tours[k].end(), u) == tours[k].end())

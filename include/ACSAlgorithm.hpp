@@ -20,6 +20,7 @@ private:
     vector<int> best_tour;          // best tour found so far
     double best_tour_length;        // length of the best tour found so far
 
+    int number_of_cities;           // number of cities
     int evaluations_budget;         // number of function evaluations budget
     int function_evaluations;       // number of function evaluations
 
