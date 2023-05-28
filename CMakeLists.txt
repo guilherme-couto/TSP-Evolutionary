@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+SET(CMAKE_CXX_FLAGS "-O3")
+SET(CMAKE_C_FLAGS "-O3")
+
 project(TSP-Evolutionary)
 file(GLOB source_files
             "*.h"

@@ -40,6 +40,11 @@ ACSAlgorithm::~ACSAlgorithm()
 }
 
 
+double ACSAlgorithm::getBestTourLength()
+{
+    return this->best_tour_length;
+}
+
 void ACSAlgorithm::initializePheromone()
 {
     for (int i = 0; i < this->number_of_cities; i++)
