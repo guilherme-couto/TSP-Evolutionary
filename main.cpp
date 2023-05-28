@@ -51,12 +51,14 @@ int main(int argc, char const *argv[])
         cout << endl;
     } */
 
-    string files[] = {"br17.atsp", "berlin52.tsp","ftv70.atsp", "ch130.tsp"};
+    string files[] = {/*"br17.atsp", "berlin52.tsp",*/"ch130.tsp", "ftv70.atsp"};
 
-    for(int j=0; j<4; j++){
+    for(int j=0; j<2; j++){
         vector<vector<Path>> matrix = readInstanceToMatrix( "../instances/"+files[j]);
         string output_file_name = "results."+files[j]+".csv";
         outputToFile(output_file_name,"best_tour, time\n", true);
+
+
 
         for (int i = 0; i < 30; i++) {
             srand(i*1561 + j*8785);

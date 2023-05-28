@@ -35,6 +35,7 @@ public:
     double computeLengthOfTour(vector<int> tour);
     void globalPheromoneUpdate();
     double getBestTourLength();
+    double bestLenghtNearestNeighborHeuristic();
 
     void runACS();
 };

@@ -51,7 +51,9 @@ void ACSAlgorithm::initializePheromone()
     {
         for (int j = 0; j < this->matrix[i].size(); j++)
         {
-            this->matrix[i][j].pheromone = this->tau0;
+            //this->matrix[i][j].pheromone = this->tau0;
+            this->matrix[i][j].pheromone = 1.0/ (this->number_of_cities * bestLenghtNearestNeighborHeuristic());
+
         }
     }
 }
@@ -79,6 +81,46 @@ double ACSAlgorithm::probabilityToChoosePath(int i, int j, vector<int> J_k_i)
     return numerator / denominator;
 }
 
+
+double ACSAlgorithm::bestLenghtNearestNeighborHeuristic()
+{
+    // Initialize the tour with the first city
+    vector<int> tour;
+    tour.push_back(0);
+
+    // Initialize the set of cities to visit
+    vector<int> cities_to_visit;
+    for (int i = 1; i < this->number_of_cities; i++)
+    {
+        cities_to_visit.push_back(i);
+    }
+
+    // While there are cities to visit
+    while (cities_to_visit.size() > 0)
+    {
+        // Find the nearest city
+        int nearest_city = -1;
+        double min_distance = 1e8;
+        for (int i = 0; i < cities_to_visit.size(); i++)
+        {
+            if (this->matrix[tour.back()][cities_to_visit[i]].distance < min_distance)
+            {
+                min_distance = this->matrix[tour.back()][cities_to_visit[i]].distance;
+                nearest_city = cities_to_visit[i];
+            }
+        }
+
+        // Add the nearest city to the tour and remove it from the set of cities to visit
+        tour.push_back(nearest_city);
+        cities_to_visit.erase(find(cities_to_visit.begin(), cities_to_visit.end(), nearest_city));
+    }
+
+    // Compute the length of the tour
+    double length = this->computeLengthOfTour(tour);
+
+    return length;
+
+}
 
 int ACSAlgorithm::cityToVisit(int i, vector<int> J_k_i)
 {
