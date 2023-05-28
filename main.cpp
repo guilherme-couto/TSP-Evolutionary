@@ -55,8 +55,8 @@ int main(int argc, char const *argv[])
 
     for(int j=0; j<4; j++){
         vector<vector<Path>> matrix = readInstanceToMatrix( "../instances/"+files[j]);
-
-        outputToFile("results."+files[j],"best_tour, time\n", true);
+        string output_file_name = "results."+files[j]+".csv";
+        outputToFile(output_file_name,"best_tour, time\n", true);
 
         for (int i = 0; i < 30; i++) {
             srand(i*1561 + j*8785);
@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
             acs.runACS();
             auto end = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<std::chrono::milliseconds>(end - beg);
-            outputToFile("results."+files[j], to_string(acs.getBestTourLength()) + ","+ to_string(duration.count()) + "\n", true);
+            outputToFile(output_file_name, to_string(acs.getBestTourLength()) + ","+ to_string(duration.count()) + "\n", true);
             cout << to_string(duration.count()) << endl;
         }
 
