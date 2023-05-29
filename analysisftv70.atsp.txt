@@ -1,4 +1,0 @@
-Best result: 2011.0
-Worst result: 2276.0
-Average result: 2136.1666666666665
-Standard deviation: 47.5885723910922

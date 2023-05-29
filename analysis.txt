@@ -1,0 +1,32 @@
+File: berlin52.tsp
+Best result: 7909.29
+Worst result: 8484.37
+Average result: 8104.65
+Standard deviation: 124.28
+Best result from literature: 7542
+Relative error: 0.05
+
+File: br17.atsp
+Best result: 39.00
+Worst result: 39.00
+Average result: 39.00
+Standard deviation: 0.00
+Best result from literature: 39
+Relative error: 0.00
+
+File: ch130.tsp
+Best result: 6632.31
+Worst result: 6972.89
+Average result: 6819.17
+Standard deviation: 88.12
+Best result from literature: 6110
+Relative error: 0.09
+
+File: ftv70.atsp
+Best result: 2011.00
+Worst result: 2276.00
+Average result: 2136.17
+Standard deviation: 47.59
+Best result from literature: 1950
+Relative error: 0.03
+
